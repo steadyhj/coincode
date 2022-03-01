@@ -49,8 +49,8 @@ while True:
                     upbit.buy_market_order("KRW-BTC", krw*0.9995)
                     buy_price = get_current_price("KRW-BTC")
                     status = 1
+                    print("buy_BTC")
                     time.sleep(1800)
-
         elif status == 1:
             current_price = get_current_price("KRW-BTC")
             df = pyupbit.get_ohlcv("KRW-BTC", interval="minute30", count=50)
@@ -66,18 +66,23 @@ while True:
             if current_price < buy_price:
                 btc = get_balance("BTC")
                 upbit.sell_market_order("KRW-BTC", btc*0.9995)
+                print("SELL_BTC")
                 status = 0
             elif now_ma5 < now_ma20:
                 btc = get_balance("BTC")
                 upbit.sell_market_order("KRW-BTC", btc*0.9995)
+                print("SELL_BTC")
                 status = 0
             elif now_ma5 < pre_ma5 and now_ma5 < now_ma20:
                 btc = get_balance("BTC")
                 upbit.sell_market_order("KRW-BTC", btc*0.9995)
+                print("SELL_BTC")
                 status = 0
             elif current_price < df['close'].iloc[-1] and df['close'].iloc[-1] <= df['open'].iloc[-2]:  
                 btc = get_balance("BTC")
                 upbit.sell_market_order("KRW-BTC", btc*0.9995)
+                print("SELL_BTC")
+                status = 0
             else:
                 status = 1
         
