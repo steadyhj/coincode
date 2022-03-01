@@ -33,17 +33,17 @@ while True:
         if status == 0: # 아것도 매수 안했을 때 매수조건 찾기
     
             # 이동평균선 조회
-            df = pyupbit.get_ohlcv("KRW-BTC", interval="minute30", count=50)
+            df = pyupbit.get_ohlcv("KRW-BTC", interval="minute30", count=30)
             df['ma5'] = df['close'].rolling(5).mean()
-            df['ma20'] = df['close'].rolling(20).mean()
+            df['ma15'] = df['close'].rolling(15).mean()
 
             pre_ma5 = df['ma5'].iloc[-2]
-            pre_ma20 = df['ma20'].iloc[-2]
+            pre_ma15 = df['ma15'].iloc[-2]
             now_ma5 = df['ma5'].iloc[-1]
-            now_ma20 = df['ma20'].iloc[-1]
+            now_ma15 = df['ma15'].iloc[-1]
             
 
-            if pre_ma5 < pre_ma20 and now_ma5 >= now_ma20:
+            if pre_ma5 <= pre_ma15 and now_ma5 >= now_ma15:
                 krw = get_balance("KRW")
                 if krw > 5000:
                     upbit.buy_market_order("KRW-BTC", krw*0.9995)
@@ -53,14 +53,14 @@ while True:
                     time.sleep(1800)
         elif status == 1:
             current_price = get_current_price("KRW-BTC")
-            df = pyupbit.get_ohlcv("KRW-BTC", interval="minute30", count=50)
+            df = pyupbit.get_ohlcv("KRW-BTC", interval="minute30", count=30)
             df['ma5'] = df['close'].rolling(5).mean()
-            df['ma20'] = df['close'].rolling(20).mean()
+            df['ma15'] = df['close'].rolling(15).mean()
 
             pre_ma5 = df['ma5'].iloc[-2]
-            pre_ma20 = df['ma20'].iloc[-2]
+            pre_ma20 = df['ma15'].iloc[-2]
             now_ma5 = df['ma5'].iloc[-1]
-            now_ma20 = df['ma20'].iloc[-1]
+            now_ma20 = df['ma15'].iloc[-1]
             
 
             if current_price < buy_price:
@@ -68,12 +68,12 @@ while True:
                 upbit.sell_market_order("KRW-BTC", btc*0.9995)
                 print("SELL_BTC")
                 status = 0
-            elif now_ma5 < now_ma20:
+            elif now_ma5 < now_ma15:
                 btc = get_balance("BTC")
                 upbit.sell_market_order("KRW-BTC", btc*0.9995)
                 print("SELL_BTC")
                 status = 0
-            elif now_ma5 < pre_ma5 and now_ma5 < now_ma20:
+            elif now_ma5 < pre_ma5 and now_ma5 < now_ma15:
                 btc = get_balance("BTC")
                 upbit.sell_market_order("KRW-BTC", btc*0.9995)
                 print("SELL_BTC")
