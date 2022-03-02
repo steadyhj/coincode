@@ -67,11 +67,15 @@ while True:
             now_price = get_current_price("KRW-BTC")
             # if pppre_dev > ppre_dev and ppre_dev > pre_dev:
             if now_price >= now_ma15 and now_ma5 >= now_ma15:
+                print("now reach1")
                 while status == 0:
                     check = pyupbit.get_ohlcv("KRW-BTC", interval="minute1", count=20)
                     check['ma15'] = df['close'].rolling(15).mean()
                     krw = get_balance("KRW")
                     check_price = get_current_price("KRW-BTC")
+                    print(check_price)
+                    print("and")
+                    print(check['ma15'].iloc[-1])
                     if krw > 5000 and check_price < check['ma15'].iloc[-1]:
                         upbit.buy_market_order("KRW-BTC", krw*0.9995)
                         buy_price = get_current_price("KRW-BTC")
@@ -80,6 +84,7 @@ while True:
                         print(buy_price)
                     # elif check_price < pppre_dev:
                     #     break
+                    time.sleep(0.5)
                         
         elif status == 1:
             current_price = get_current_price("KRW-BTC")
