@@ -48,13 +48,13 @@ while True:
             df['ma5'] = df['close'].rolling(5).mean()
             df['ma15'] = df['close'].rolling(15).mean()
 
-            pppre_ma15 = df['ma15'].iloc[-4] 
-            pppre_ma5 = df['ma5'].iloc[-4] 
-            pppre_dev = pppre_ma15 - pppre_ma5
+            # pppre_ma15 = df['ma15'].iloc[-4] 
+            # pppre_ma5 = df['ma5'].iloc[-4] 
+            # pppre_dev = pppre_ma15 - pppre_ma5
             
-            ppre_ma5 = df['ma5'].iloc[-3]
-            ppre_ma15 = df['ma15'].iloc[-3]
-            ppre_dev = ppre_ma15 - ppre_ma5
+            # ppre_ma5 = df['ma5'].iloc[-3]
+            # ppre_ma15 = df['ma15'].iloc[-3]
+            # ppre_dev = ppre_ma15 - ppre_ma5
 
             pre_ma5 = df['ma5'].iloc[-2]
             pre_ma15 = df['ma15'].iloc[-2]
@@ -64,20 +64,22 @@ while True:
             now_ma15 = df['ma15'].iloc[-1]
             now_dev = now_ma15 - now_ma5
 
-            if pppre_dev > ppre_dev and ppre_dev > pre_dev:
-                if pre_ma5 <= pre_ma15 and now_dev <= pre_dev*0.5:
-                    while status == 0:
-                        check = pyupbit.get_ohlcv("KRW-BTC", interval="minute1", count=30)
-                        check['ma20'] = df['close'].rolling(20).mean()
-                        krw = get_balance("KRW")
-                        check_price = get_current_price("KRW-BTC")
-                        if krw > 5000 and check_price < check['ma20'].iloc[-1]:
-                            upbit.buy_market_order("KRW-BTC", krw*0.9995)
-                            buy_price = get_current_price("KRW-BTC")
-                            status = 1
-                            print("buy_BTC")
-                        elif check_price < pppre_dev:
-                            break
+            now_price = get_current_price("KRW-BTC")
+            # if pppre_dev > ppre_dev and ppre_dev > pre_dev:
+            if now_price >= now_ma15 and now_ma5 >= now_ma15:
+                while status == 0:
+                    check = pyupbit.get_ohlcv("KRW-BTC", interval="minute1", count=20)
+                    check['ma15'] = df['close'].rolling(15).mean()
+                    krw = get_balance("KRW")
+                    check_price = get_current_price("KRW-BTC")
+                    if krw > 5000 and check_price < check['ma15'].iloc[-1]:
+                        upbit.buy_market_order("KRW-BTC", krw*0.9995)
+                        buy_price = get_current_price("KRW-BTC")
+                        status = 1
+                        print("buy_BTC")
+                        print(buy_price)
+                    # elif check_price < pppre_dev:
+                    #     break
                         
         elif status == 1:
             current_price = get_current_price("KRW-BTC")
